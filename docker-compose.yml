@@ -1,0 +1,27 @@
+services:
+  opgeth:
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.101603.5
+    env_file: op-geth.env
+    volumes:
+      - ./op-geth-data:/opt/op-geth/
+      - ./genesis.json:/opt/op-geth/genesis.json:ro
+    network_mode: host
+
+  opnode:
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.16.2
+    env_file: op-node.env
+    command:
+      - op-node
+    volumes:
+      - ./op-node-data:/opt/op-node/
+      - ./op-geth-data/geth:/opt/op-geth/geth:ro
+      - ./rollup.json:/opt/op-node/rollup.json:ro
+    network_mode: host
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7300"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      opgeth:
+        condition: service_started
