@@ -4,7 +4,6 @@ services:
     env_file: op-geth.env
     volumes:
       - ./op-geth-data:/opt/op-geth/
-      - ./genesis.json:/opt/op-geth/genesis.json:ro
     network_mode: host
 
   opnode:
@@ -15,7 +14,6 @@ services:
     volumes:
       - ./op-node-data:/opt/op-node/
       - ./op-geth-data/geth:/opt/op-geth/geth:ro
-      - ./rollup.json:/opt/op-node/rollup.json:ro
     network_mode: host
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7300"]
